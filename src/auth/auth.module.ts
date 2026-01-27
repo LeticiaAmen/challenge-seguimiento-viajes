@@ -3,8 +3,6 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
 import { FirebaseStrategy } from './strategies/firebase.strategy';
 import { FirebaseAuthGuard } from './guards/firebase-auth.guard';
-import { AuthController } from './auth.controller';
-import { AuthDebugController } from './auth-debug.controller';
 import { UsersModule } from '../users/users.module';
 import { RolesGuard } from './guards/roles.guard';
 
@@ -25,7 +23,7 @@ import { RolesGuard } from './guards/roles.guard';
         UsersModule,
     ],
     providers: [FirebaseStrategy, FirebaseAuthGuard, RolesGuard],
-    controllers: [AuthController, AuthDebugController],
+    controllers: [],
     exports: [PassportModule, FirebaseAuthGuard, RolesGuard],
 })
 export class AuthModule { }
