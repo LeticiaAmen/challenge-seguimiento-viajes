@@ -9,18 +9,6 @@ import { UserDocument } from './schemas/user.schema';
  * Esta clase contiene la lógica de negocio relacionada con usuarios:
  * - Determinación de roles basada en configuración
  * - Coordinación del Sync Pattern (crear usuario si no existe)
- *
- * Arquitectura del proyecto:
- * - Controllers/Gateways: Validan DTOs, llaman servicios, retornan respuestas
- * - Services (esta capa): Lógica de negocio, validaciones de roles
- * - Repositories: Único acceso a modelos de Mongoose
- *
- * ¿Por qué separar Service de Repository?
- * - El Repository solo maneja operaciones CRUD puras
- * - El Service añade lógica de negocio (determinar roles, validaciones)
- * - Facilita testing: puedes mockear el repository
- *
- * @see architecture.md - "Services: role checks, trip transitions, update logic"
  */
 @Injectable()
 export class UsersService {
@@ -65,8 +53,6 @@ export class UsersService {
      *
      * @param firebaseUid - UID de Firebase del usuario
      * @returns Array con el rol: ['driver'] o ['passenger']
-     *
-     * @see auth-and-roles.md - "Determine driver role from env DRIVER_UIDS only (deterministic)"
      */
     private determineRoles(firebaseUid: string): string[] {
         if (this.driverUids.includes(firebaseUid)) {
@@ -83,7 +69,7 @@ export class UsersService {
      *
      * Flujo completo:
      * 1. Usuario hace request con token de Firebase en header Authorization
-     * 2. FirebaseStrategy valida el token con Firebase Admin SDK
+     * 2. FirebaseStrategy valida la firma del token JWT (usando claves públicas de Google)
      * 3. Se obtiene { uid, email } del token decodificado
      * 4. Se llama este método con esos datos
      * 5. Se busca usuario en MongoDB por firebaseUid
@@ -93,9 +79,6 @@ export class UsersService {
      * @param firebaseUid - UID extraído del token de Firebase validado
      * @param email - Email extraído del token de Firebase
      * @returns Documento del usuario (existente o recién creado)
-     *
-     * @see hard-constraints.md - Sync Pattern
-     * @see context.md - "Al validar el token, si el usuario no existe en MongoDB, crear registro"
      */
     async findOrCreateUser(
         firebaseUid: string,

@@ -2,7 +2,7 @@ import { SetMetadata } from '@nestjs/common';
 
 /**
  * Clave utilizada para almacenar la metadata de roles.
- * El RolesGuard (T10) leerá esta clave para verificar permisos.
+ * El RolesGuard leerá esta clave para verificar permisos.
  * 
  * Se exporta para que pueda ser utilizada por el Guard.
  */

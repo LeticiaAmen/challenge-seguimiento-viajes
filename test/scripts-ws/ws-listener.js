@@ -10,7 +10,7 @@ import { io } from "socket.io-client";
  */
 
 const PASSENGER_TOKEN = ""; //poner el token obtenido desde postman
-const TRIP_ID = "697a273bc784f20171f1b0b3";
+const TRIP_ID = ""; //poner el id del viaje obtenido desde postman
 
 const socket = io("http://localhost:3000", {
     auth: { token: PASSENGER_TOKEN },

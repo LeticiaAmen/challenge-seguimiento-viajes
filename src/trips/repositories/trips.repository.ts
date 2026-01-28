@@ -54,7 +54,8 @@ export class TripsRepository {
     async findActiveRequestedTrips(): Promise<TripDocument[]> {
         return this.tripModel
             .find({ status: TripStatus.REQUESTED })
-            .populate('passenger') // Trae la info del User asociado
+            .select('-__v')
+            .populate('passenger', '_id firebaseUid email roles')
             .exec();
     }
 
@@ -98,7 +99,8 @@ export class TripsRepository {
     ): Promise<TripDocument | null> {
         return this.tripModel
             .findByIdAndUpdate(tripId, updates, { new: true })
-            .populate('passenger')
+            .select('-__v')
+            .populate('passenger', '_id firebaseUid email roles')
             .exec();
     }
 }

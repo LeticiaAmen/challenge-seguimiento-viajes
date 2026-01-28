@@ -6,6 +6,7 @@ import { UsersService } from '../users/users.service';
 import { TripsService } from './trips.service';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { JoinTripDto } from './dto/join-trip.dto';
+import { handleWsException } from '../common/ws/ws-error.util';
 
 /**
  * TripsGateway
@@ -129,22 +130,7 @@ export class TripsGateway implements OnGatewayConnection {
             return updatedTrip;
 
         } catch (error) {
-            console.error('Error in handleUpdateLocation:', error.message);
-
-            // Si es una excepción de WS, la relanzamos
-            if (error instanceof WsException) {
-                throw error;
-            }
-
-            // Si es un error de lógica de negocio (HttpException del servicio),
-            // lo convertimos a WsException para que el cliente lo reciba limpio.
-            // Los errores del servicio son: ForbiddenException, BadRequestException, NotFoundException
-            if (error.status && typeof error.status === 'number') {
-                throw new WsException(error.message);
-            }
-
-            // Error no controlado
-            throw new WsException('Internal server error processing location update');
+            handleWsException(error);
         }
     }
 
@@ -157,26 +143,30 @@ export class TripsGateway implements OnGatewayConnection {
         @MessageBody() dto: JoinTripDto,
         @ConnectedSocket() client: Socket,
     ) {
-        // 1. Auth check
-        if (!client.data.user) {
-            throw new WsException('Unauthorized');
+        try {
+            // 1. Auth check
+            if (!client.data.user) {
+                throw new WsException('Unauthorized');
+            }
+
+            // 2. Verificar existencia del viaje 
+            // Esto evita que se suscriban a salas basura
+            const trip = await this.tripsService.getTrip(dto.tripId);
+            if (!trip) {
+                throw new WsException('Trip not found');
+            }
+
+            // 3. Unirse a la sala
+            const room = this.getTripRoom(dto.tripId);
+            client.join(room);
+
+            console.log(`User ${client.data.user.email} joined room ${room}`);
+
+            // 4. Retornar ack
+            return { ok: true, room };
+        } catch (error) {
+            handleWsException(error);
         }
-
-        // 2. Verificar existencia del viaje 
-        // Esto evita que se suscriban a salas basura
-        const trip = await this.tripsService.getTrip(dto.tripId);
-        if (!trip) {
-            throw new WsException('Trip not found');
-        }
-
-        // 3. Unirse a la sala
-        const room = this.getTripRoom(dto.tripId);
-        client.join(room);
-
-        console.log(`User ${client.data.user.email} joined room ${room}`);
-
-        // 4. Retornar ack
-        return { ok: true, room };
     }
 
     /**

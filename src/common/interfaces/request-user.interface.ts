@@ -11,14 +11,6 @@ import { Types } from 'mongoose';
  * - Tipado fuerte: TypeScript sabe exactamente qué hay en req.user
  * - Independencia: No depende del Document de Mongoose
  * - Claridad: Define explícitamente qué campos están disponibles
- *
- * Uso con el decorador @CurrentUser:
- * ```typescript
- * @Get('profile')
- * getProfile(@CurrentUser() user: RequestUser) {
- *   console.log(user._id, user.email, user.roles);
- * }
- * ```
  */
 export interface RequestUser {
     /**

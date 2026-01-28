@@ -9,13 +9,6 @@ import { User, UserDocument } from '../schemas/user.schema';
  * Esta clase es la ÚNICA que tiene acceso directo al modelo de Mongoose.
  * Siguiendo el patrón Repository y la arquitectura limpia del proyecto:
  * - Controllers/Gateways → Services → Repositories → Base de datos
- *
- * ¿Por qué usar un repositorio?
- * 1. Abstracción: Los servicios no conocen detalles de Mongoose
- * 2. Testabilidad: Fácil de mockear en pruebas unitarias
- * 3. Mantenibilidad: Si cambiamos de MongoDB a otra BD, solo cambia esta capa
- *
- * @see architecture.md - "Repositories: the only place allowed to touch Mongoose models"
  */
 @Injectable()
 export class UsersRepository {
@@ -80,8 +73,6 @@ export class UsersRepository {
      * @param email - Email extraído del token de Firebase
      * @param roles - Roles determinados por DRIVER_UIDS (desde el Service)
      * @returns El usuario existente o el recién creado
-     *
-     * @see hard-constraints.md - "Implement Sync Pattern: create Mongo user only if firebaseUid does not exist"
      */
     async findOrCreate(
         firebaseUid: string,

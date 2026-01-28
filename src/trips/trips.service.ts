@@ -79,7 +79,7 @@ export class TripsService {
             throw new BadRequestException('Cannot set status back to REQUESTED');
         }
 
-        // 4. Verificar existencia del viaje (opcional, pero buena práctica antes de update)
+        // 4. Verificar existencia del viaje 
         // Optimizamos llamando directo al update, si devuelve null es que no existe.
         // Sin embargo, para cumplir estrictamente los pasos de "Not Found" vs "Logic", 
         // a veces se separa. Aquí haremos el update directo por eficiencia y si es null lanzamos 404.

@@ -6,6 +6,11 @@ import { JwksClient } from 'jwks-rsa';
 import * as jwt from 'jsonwebtoken';
 import { UsersService } from '../../users/users.service';
 import { RequestUser } from '../../common/interfaces/request-user.interface';
+/**
+ * Estrategia de autenticación que valida tokens JWT emitidos por Firebase.
+ * Se utiliza para proteger endpoints de la API, verificando la validez del token
+ * y vinculando la identidad de Firebase con el servicio de usuarios interno.
+ */
 
 @Injectable()
 export class FirebaseStrategy extends PassportStrategy(Strategy, 'firebase-jwt') {
@@ -69,6 +74,12 @@ export class FirebaseStrategy extends PassportStrategy(Strategy, 'firebase-jwt')
         this.jwksClient = client;
     }
 
+    /**
+     * Valida el token JWT emitido por Firebase.
+     * 
+     * @param payload - El payload del token JWT.
+     * @returns Un objeto RequestUser con la información del usuario.
+     */
     async validate(payload: any): Promise<RequestUser> {
         // En algunos casos (dependiendo de la librería/config), el payload puede llegar como string.
         // Aseguramos que sea un objeto decodificado.
