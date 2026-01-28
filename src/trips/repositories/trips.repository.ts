@@ -83,4 +83,22 @@ export class TripsRepository {
             .findByIdAndUpdate(tripId, updates, { new: true })
             .exec();
     }
+
+    /**
+     * Actualiza un viaje y retorna el documento actualizado con el pasajero poblado.
+     * Útil para operaciones donde el cliente necesita la información completa del viaje (ej: WebSockets).
+     * 
+     * @param tripId - ID del viaje a actualizar.
+     * @param updates - Modificaciones a aplicar.
+     * @returns El viaje actualizado y poblado, o null si no existe.
+     */
+    async updateTripPopulated(
+        tripId: string,
+        updates: Partial<Trip>,
+    ): Promise<TripDocument | null> {
+        return this.tripModel
+            .findByIdAndUpdate(tripId, updates, { new: true })
+            .populate('passenger')
+            .exec();
+    }
 }

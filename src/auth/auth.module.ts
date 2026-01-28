@@ -5,6 +5,7 @@ import { FirebaseStrategy } from './strategies/firebase.strategy';
 import { FirebaseAuthGuard } from './guards/firebase-auth.guard';
 import { UsersModule } from '../users/users.module';
 import { RolesGuard } from './guards/roles.guard';
+import { FirebaseTokenService } from './services/firebase-token.service';
 
 /**
  * Módulo de Autenticación - Configura la autenticación con Firebase.
@@ -22,8 +23,8 @@ import { RolesGuard } from './guards/roles.guard';
         ConfigModule,
         UsersModule,
     ],
-    providers: [FirebaseStrategy, FirebaseAuthGuard, RolesGuard],
+    providers: [FirebaseStrategy, FirebaseAuthGuard, RolesGuard, FirebaseTokenService],
     controllers: [],
-    exports: [PassportModule, FirebaseAuthGuard, RolesGuard],
+    exports: [PassportModule, FirebaseAuthGuard, RolesGuard, FirebaseTokenService],
 })
 export class AuthModule { }
